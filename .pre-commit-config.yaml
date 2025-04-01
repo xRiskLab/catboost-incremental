@@ -1,0 +1,8 @@
+repos:
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.6.11
+    hooks:
+      - id: uv-lock
+      - id: uv-export
+      - id: pip-compile
+        args: [requirements.in, -o, requirements.txt]

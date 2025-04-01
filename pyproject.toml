@@ -1,0 +1,65 @@
+[project]
+name = "catboost-incremental"
+version = "0.1.0"
+description = "CatBoost Incremental with Ray"
+authors = [
+    { name = "xRiskLab", email = "contact@xrisklab.ai" }
+]
+license = { text = "MIT" }
+readme = "README.md"
+keywords = ["gradient boosting", "scoring", "classification"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence"
+]
+requires-python = ">=3.9"
+
+dependencies = [
+    "catboost>=1.2.7",
+    "fastapi>=0.115.11",
+    "httpx>=0.28.1",
+    "ipykernel>=6.29.5",
+    "ipywidgets>=8.1.5",
+    "loguru>=0.7.3",
+    "orjson>=3.10.15",
+    "pandas>=2.2.3",
+    "pyarrow>=19.0.1",
+    "pytest>=8.3.5",
+    "pytest-asyncio>=0.26.0",
+    "ray[serve,tune]>=2.38.0",
+    "requests>=2.32.3",
+    "rich>=13.9.4",
+    "ruff>=0.9.10",
+    "scikit-learn>=1.6.1",
+    "tqdm>=4.67.1",
+    "typer>=0.15.2",
+    "uvicorn>=0.34.0",
+]
+
+[dependency-groups]
+dev = [
+    "awswrangler>=3.10.1",
+    "faker>=37.1.0",
+    "moto[s3]>=5.1.1",
+    "pytest-asyncio>=0.26.0",
+]
+
+[tool.setuptools]
+packages = ["catboost_incremental"]
+
+[tool.pytest.ini_options]
+addopts = "-s -v"
+pythonpath = ["."]
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = ["C0413", "C0103", "E0213"]
+
+[tool.ruff]
+extend-include = ["*.ipynb"]
