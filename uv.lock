@@ -299,9 +299,10 @@ wheels = [
 
 [[package]]
 name = "catboost-incremental"
-version = "0.1.1"
+version = "0.1.2"
 source = { virtual = "." }
 dependencies = [
+    { name = "awswrangler" },
     { name = "catboost" },
     { name = "fastapi" },
     { name = "httpx" },
@@ -326,7 +327,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "awswrangler" },
     { name = "faker" },
     { name = "moto", extra = ["s3"] },
     { name = "pytest-asyncio" },
@@ -334,6 +334,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "awswrangler", specifier = ">=3.10.1" },
     { name = "catboost", specifier = ">=1.2.7" },
     { name = "fastapi", specifier = ">=0.115.11" },
     { name = "httpx", specifier = ">=0.28.1" },
@@ -357,7 +358,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "awswrangler", specifier = ">=3.10.1" },
     { name = "faker", specifier = ">=37.1.0" },
     { name = "moto", extras = ["s3"], specifier = ">=5.1.1" },
     { name = "pytest-asyncio", specifier = ">=0.26.0" },

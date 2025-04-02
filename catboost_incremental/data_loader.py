@@ -7,7 +7,7 @@ import boto3
 import numpy as np
 import pandas as pd
 import pyarrow.dataset as ds
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from catboost_incremental.logging_config import setup_logger
 
@@ -128,21 +128,10 @@ class DataLoader(DataValidation):
             y = df[self.label_col]
             X = df.drop(columns=[self.label_col])
         else:
-            # Fallback: last column is label
             y = df.iloc[:, -1]
             X = df.iloc[:, :-1]
 
         if X.empty:
-            raise ValueError(
-                'DataFrame is empty after dropping label and partition columns.'
-            )
+            raise ValueError('DataFrame is empty after dropping label and partition columns.')
 
-        # Normalize label dtype:
-        if y.dtype in ['string', 'object']:
-            # If string labels (classification), convert to category codes
-            y = y.astype('category').cat.codes.astype('int64')
-        else:
-            # Otherwise ensure it's plain numpy array with numeric dtype
-            y = y.to_numpy()
-
-        return X, y
+        return X, y.to_numpy()

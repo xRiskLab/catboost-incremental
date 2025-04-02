@@ -1,6 +1,6 @@
 [project]
 name = "catboost-incremental"
-version = "0.1.1"
+version = "0.1.2"
 description = "CatBoost Incremental with Ray"
 authors = [
     { name = "xRiskLab", email = "contact@xrisklab.ai" }
@@ -22,6 +22,7 @@ classifiers = [
 requires-python = ">=3.9"
 
 dependencies = [
+    "awswrangler>=3.10.1",
     "catboost>=1.2.7",
     "fastapi>=0.115.11",
     "httpx>=0.28.1",
@@ -45,7 +46,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "awswrangler>=3.10.1",
     "faker>=37.1.0",
     "moto[s3]>=5.1.1",
     "pytest-asyncio>=0.26.0",
