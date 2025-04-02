@@ -6,15 +6,15 @@
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org)
 [![CatBoost](https://img.shields.io/badge/catboost-1.2.7-orange.svg)](https://catboost.ai/)
 [![Ray](https://img.shields.io/badge/ray-2.44.1-g.svg)](https://docs.ray.io/en/latest/)
-
-Author: https://github.com/deburky
+[![License](https://img.shields.io/github/license/xRiskLab/catboost-incremental)](LICENSE)
 
 ## 📚 Table of Contents
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
 - [Dataset preparation](#dataset-preparation)
 - [Incremental learning](#incremental-learning)
-- [Install](#install)
+- [Installation](#installation)
+- [Getting Started](#getting-started)
 - [Training](#training)
 - [Tuning](#tuning)
 - [Serving](#serving)
@@ -25,13 +25,13 @@ Author: https://github.com/deburky
 
 ## 🪪 Introduction
 
-This repo contains an ML training and serving system for **CatBoost + Ray** incremental learning. CatBoost and Ray are a powerful combination for training and serving machine learning models. 
+This repo contains a machine learning (ML) training and serving system for **CatBoost + Ray** incremental learning. CatBoost and Ray are a powerful combination for training and serving machine learning models.
 
-CatBoost is a gradient boosting library that is particularly effective for categorical / text / embedding features, while Ray is a distributed computing framework that allows you to scale your machine learning workloads.
+[**CatBoost**](https://catboost.ai/) is a gradient boosting library that is particularly effective for categorical / text / embedding features, while [**Ray**](https://www.ray.io/) is a distributed computing framework that allows you to scale your machine learning workloads.
 
 The package serves to address the following use cases:
 
-* Training on datasets that do not not fit into memory (e.g., S3 parquet).
+* Training on datasets that do not fit into memory (e.g., S3 parquet).
 * Tuning hyperparameters with Ray Tune on large datasets.
 * Serving incrementally trained CatBoost models with Ray Serve.
 
@@ -42,6 +42,9 @@ The package serves to address the following use cases:
 - uv
 - Data in Parquet format (partitioned)
 - Docker (optional)
+## 🚀 Getting Started
+
+To train your first model, just point `DataLoader` to a local or S3 parquet directory and call `trainer.train()`. See [Training](#training) for full examples.
 
 ## 🗂 Dataset preparation
 
@@ -76,7 +79,7 @@ Install from GitHub with pip:
 pip install git+https://github.com/xRiskLab/catboost-incremental.git
 ```
 
-Or from the local directory with `uv`:
+Or install from a local clone using `uv`:
 
 ```bash
 uv pip install -e .
@@ -86,7 +89,15 @@ Examples of package usage are provided in the `notebooks/` directory.
 
 ## 💻 Training
 
-For training you can use:
+When reading parquet data with `DataLoader`, use the `use_cols` argument to specify the features and label to include in the training pool.
+
+Make sure the label column is:
+- included in `use_cols`
+- explicitly passed via `label_col` if it is not the last column in the dataset.
+
+### 📁 Local Parquet
+
+We can load the dataset from a local directory. The `DataLoader` will read the data in chunks and train the model incrementally.
 
 ```python
 import pyarrow.dataset as ds
@@ -108,10 +119,33 @@ trainer = CatBoostTrainer(
     model_config={"allow_writing_files": False},
 )
 
-model = trainer.train()
+model = trainer.train()  # returns trained CatBoost model artifact
 score = trainer.evaluate(full_df)
 print(f"Accuracy: {score:.4f}")
 ```
+
+### ☁️ Using with AWS S3
+
+When loading from S3, pass an active `boto3.Session` to the `DataLoader`:
+
+```python
+import boto3
+
+session = boto3.Session(
+    aws_access_key_id="your-access-key",
+    aws_secret_access_key="your-secret-key",
+    region_name="your-region",
+)
+
+data_loader = DataLoader(
+    dataset_path="s3://your-bucket/path/to/data/",
+    chunk_size=1000,
+    partition_id_col="partition_id",
+    label_col="target",
+    boto3_session=session,
+)
+```
+
 ## 🪛 Tuning
 
 ```python
@@ -166,7 +200,7 @@ print(f"Best config: {result.config}")
 
 ## 🧬 Serving
 
-## Jupyter notebooks
+## 📓 Jupyter notebooks
 
 If you're running inside a Jupyter notebook, you can serve the model using:
 
@@ -180,7 +214,7 @@ serve.start(detached=True, http_options={"host": "0.0.0.0", "port": 8000})
 serve.run(app, route_prefix="/predict")
 ```
 
-## Command line
+## 🖥️ Command line
 
 You can start Ray cluster from the command line:
 
@@ -209,7 +243,7 @@ You should see:
 
 ```plain
 2025-04-01 01:06:29,822 INFO worker.py:1660 -- Connecting to existing Ray cluster at address: 127.0.0.1:6379...
-2025-04-01 01:06:29,826 INFO worker.py:1843 -- Connected to Ray cluster. View the dashboard at 127.0.0.1:8265 
+2025-04-01 01:06:29,826 INFO worker.py:1843 -- Connected to Ray cluster. View the dashboard at 127.0.0.1:8265
 ```
 
 Test the endpoint with `curl`:
@@ -268,7 +302,7 @@ For example, my container ID is 'a5ae3ebc6f' so I run:
 docker stop a5ae3ebc6f
 ```
 
-**Note:** Docker containers exit by default once the entrypoint script finishes execution.  
+**Note:** Docker containers exit by default once the entrypoint script finishes execution.
 To keep the container alive, the entrypoint script (`entrypoint.sh`) ends with:
 `exec tail -f /dev/null`
 (See [this Stack Overflow thread](https://stackoverflow.com/questions/28212380/why-docker-container-exits-immediately)).

@@ -29,11 +29,11 @@ def catboost_trainable(config, trainer_factory, label_col, metric):
     y_true = test_data[label_col]
     y_pred = model.predict(X_test)
 
-    if metric == "accuracy" and y_pred.ndim > 1:
+    if metric == 'accuracy' and y_pred.ndim > 1:
         y_pred = y_pred.argmax(axis=1)
 
-    score = (y_pred == y_true).mean() if metric == "accuracy" else None
-    logger.info(f"Tuning score: {score}")
+    score = (y_pred == y_true).mean() if metric == 'accuracy' else None
+    logger.info(f'Tuning score: {score}')
     tune.report({metric: score})
 
 
@@ -45,7 +45,7 @@ class CatBoostTuner:
     def __init__(
         self,
         trainer: CatBoostTrainer,
-        metric: str = "accuracy",
+        metric: str = 'accuracy',
     ):
         self.trainer = trainer
         self.metric = metric
@@ -55,9 +55,9 @@ class CatBoostTuner:
         """Perform hyperparameter tuning using Ray Tune."""
         if not is_initialized():
             init(ignore_reinit_error=True, include_dashboard=False)
-            logger.info("Ray initialized.")
+            logger.info('Ray initialized.')
 
-        resolved_mode = mode or ("min" if "loss" in self.metric.lower() else "max")
+        resolved_mode = mode or ('min' if 'loss' in self.metric.lower() else 'max')
 
         # Inject config into new trainer instances
         def trainer_factory(config):

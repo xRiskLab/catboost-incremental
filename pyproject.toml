@@ -1,6 +1,6 @@
 [project]
 name = "catboost-incremental"
-version = "0.1.0"
+version = "0.1.1"
 description = "CatBoost Incremental with Ray"
 authors = [
     { name = "xRiskLab", email = "contact@xrisklab.ai" }

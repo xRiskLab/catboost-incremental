@@ -30,13 +30,13 @@ def generate_synthetic_parquet(
         correlation_strength (float): Strength of correlation between features and target (0 to 1).
     """
     print(
-        f"Generating synthetic data with {n_samples} samples, "
-        f"{n_features} features, {num_partitions} partitions, "
-        f"correlation_strength={correlation_strength}..."
+        f'Generating synthetic data with {n_samples} samples, '
+        f'{n_features} features, {num_partitions} partitions, '
+        f'correlation_strength={correlation_strength}...'
     )
 
-    feature_columns = [f"feat_{i}" for i in range(n_features)]
-    all_columns = feature_columns + ["target", "partition_id"]  # noqa: RUF005
+    feature_columns = [f'feat_{i}' for i in range(n_features)]
+    all_columns = feature_columns + ['target', 'partition_id']  # noqa: RUF005
 
     os.makedirs(output_path, exist_ok=True)  # noqa: PTH103
 
@@ -61,26 +61,26 @@ def generate_synthetic_parquet(
         partition_id = np.random.randint(0, num_partitions, size)
 
         df = pd.DataFrame(X, columns=feature_columns)
-        df["target"] = y
-        df["partition_id"] = partition_id
+        df['target'] = y
+        df['partition_id'] = partition_id
 
         table = pa.Table.from_pandas(df)
 
         pq.write_to_dataset(
             table,
             root_path=output_path,
-            partition_cols=["partition_id"],
-            existing_data_behavior="overwrite_or_ignore",
+            partition_cols=['partition_id'],
+            existing_data_behavior='overwrite_or_ignore',
         )
 
-        print(f"Saved {i + size}/{n_samples} samples...")
+        print(f'Saved {i + size}/{n_samples} samples...')
 
-    print(f"Parquet dataset saved at: {output_path}")
+    print(f'Parquet dataset saved at: {output_path}')
 
 
 @app.command()
 def main(
-    output_path: str = "data",
+    output_path: str = 'data',
     n_samples: int = 200_000,
     n_features: int = 10,
     chunk_size: int = 20_000,
@@ -100,5 +100,5 @@ def main(
     )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app()
